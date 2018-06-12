@@ -1,0 +1,111 @@
+# Affine Registration in 3D
+#==========================
+
+import numpy as np
+from dipy.viz import regtools
+from dipy.data import fetch_stanford_hardi, read_stanford_hardi
+from dipy.data.fetcher import fetch_syn_data, read_syn_data
+from dipy.align.imaffine import (transform_centers_of_mass,
+                                 AffineMap,
+                                 MutualInformationMetric,
+                                 AffineRegistration)
+from dipy.align.transforms import (TranslationTransform3D,
+                                   RigidTransform3D,
+                                   AffineTransform3D)
+
+# fetch static image from the Stanford HARDI dataset
+fetch_stanford_hardi()
+nib_stanford, gtab_stanford = read_stanford_hardi()
+static = np.squeeze(nib_stanford.get_data())[..., 0]
+static_grid2world = nib_stanford.affine
+
+# fetch moving image
+fetch_syn_data()
+nib_syn_t1, nib_syn_b0 = read_syn_data()
+moving = np.array(nib_syn_b0.get_data())
+moving_grid2world = nib_syn_b0.affine
+
+# resample moving image on a grid of same dimemsions as static image
+identity = np.eye(4)
+affine_map = AffineMap(identity,
+                       static.shape, static_grid2world,
+                       moving.shape, moving_grid2world)
+resampled = affine_map.transform(moving)
+regtools.overlay_slices(static, resampled, None, 0,
+                        "Static", "Moving", "resampled_0.png")
+regtools.overlay_slices(static, resampled, None, 1,
+                        "Static", "Moving", "resampled_1.png")
+regtools.overlay_slices(static, resampled, None, 2,
+                        "Static", "Moving", "resampled_2.png")
+
+# align the centers of mass of two images
+c_of_mass = transform_centers_of_mass(static, static_grid2world,
+                                      moving, moving_grid2world)
+transformed = c_of_mass.transform(moving)
+regtools.overlay_slices(static, transformed, None, 0,
+                        "Static", "Transformed", "transformed_com_0.png")
+regtools.overlay_slices(static, transformed, None, 1,
+                        "Static", "Transformed", "transformed_com_1.png")
+regtools.overlay_slices(static, transformed, None, 2,
+                        "Static", "Transformed", "transformed_com_2.png")
+
+# create similarity metric (Mutual Information)
+nbins = 32           # number of bins to discretize joint & marginal PDF
+sampling_prop = None # percentage of voxels for computing PDFs, None: 100%
+metric = MutualInformationMetric(nbins, sampling_prop)
+
+# multi-resolution strategy, building Guassian Pyramid
+level_iters = [10000, 1000, 100] # number of iterations
+sigmas = [3.0, 1.0, 0.0]         # sd of Gaussian kernel
+factors = [4, 2, 1]              # sub-sampling factors
+
+# instantiate registration class
+affreg = AffineRegistration(metric=metric,
+                            level_iters=level_iters,
+                            sigmas=sigmas,
+                            factors=factors)
+
+# First, look for an optimal translation
+transform = TranslationTransform3D()
+params0 = None
+starting_affine = c_of_mass.affine
+translation = affreg.optimize(static, moving, transform, params0,
+                              static_grid2world, moving_grid2world,
+                              starting_affine=starting_affine)
+transformed = translation.transform(moving)
+regtools.overlay_slices(static, transformed, None, 0,
+                        "Static", "Transformed", "transformed_trans_0.png")
+regtools.overlay_slices(static, transformed, None, 1,
+                        "Static", "Transformed", "transformed_trans_1.png")
+regtools.overlay_slices(static, transformed, None, 2,
+                        "Static", "Transformed", "transformed_trans_2.png")
+
+# Then, refine with a rigid transform
+transform = RigidTransform3D()
+params0 = None
+starting_affine = translation.affine
+rigid = affreg.optimize(static, moving, transform, params0,
+                        static_grid2world, moving_grid2world,
+                        starting_affine=starting_affine)
+transformed = rigid.transform(moving)
+regtools.overlay_slices(static, transformed, None, 0,
+                        "Static", "Transformed", "transformed_rigid_0.png")
+regtools.overlay_slices(static, transformed, None, 1,
+                        "Static", "Transformed", "transformed_rigid_1.png")
+regtools.overlay_slices(static, transformed, None, 2,
+                        "Static", "Transformed", "transformed_rigid_2.png")
+
+# Finally, refine with a full affine transorm
+transform = AffineTransform3D()
+params0 = None
+starting_affine = rigid.affine
+affine = affreg.optimize(static, moving, transform, params0,
+                         static_grid2world, moving_grid2world,
+                         starting_affine=starting_affine)
+transformed = affine.transform(moving)
+regtools.overlay_slices(static, transformed, None, 0,
+                        "Static", "Transformed", "transformed_affine_0.png")
+regtools.overlay_slices(static, transformed, None, 1,
+                        "Static", "Transformed", "transformed_affine_1.png")
+regtools.overlay_slices(static, transformed, None, 2,
+                        "Static", "Transformed", "transformed_affine_2.png")
