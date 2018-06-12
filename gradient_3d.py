@@ -43,11 +43,13 @@ coronal = np.asarray(out[:, slice_indices[1], :]).astype(np.uint8)
 sagittal = np.asarray(out[slice_indices[0], :, :]).astype(np.uint8)
 
 import matplotlib.pyplot as plt
-fig, ax = plt.subplots(1, 3)
-ax[0].imshow(axial)
-ax[0].set_title('axial')
-ax[1].imshow(coronal)
-ax[1].set_title('coronal')
-ax[2].imshow(sagittal)
-ax[2].set_title('sagittal')
-fig.savefig('gradient_3d.png')
+from xvfbwrapper import Xvfb
+with Xvfb() as xvfb:
+	fig, ax = plt.subplots(1, 3)
+	ax[0].imshow(axial)
+	ax[0].set_title('axial')
+	ax[1].imshow(coronal)
+	ax[1].set_title('coronal')
+	ax[2].imshow(sagittal)
+	ax[2].set_title('sagittal')
+	fig.savefig('gradient_3d.png')
