@@ -31,8 +31,15 @@ inside = np.empty(tuple(out_shape), dtype=np.int32)
 _gradient_3d(moving, moving_world2grid, moving_spacing, 
              static_grid2world, out, inside)
 
-newFile = open('gradient_3d.bin', 'wb')
-newFile.write(out)
+# newFile = open('gradient_3d.bin', 'wb')
+# newFile.write(out)
+# newFile.close()
+
+np.save('gradient_3d.npy', out)
+# out = np.load('gradient_3d.npy')
+
+# from dipy.io.image import save_nifti
+# save_nifti('gradient_3d.nii.gz', out, static_grid2world)
 
 out = np.asarray(out, dtype=np.float64)
 out = 255 * (out - out.min()) / (out.max() - out.min())
