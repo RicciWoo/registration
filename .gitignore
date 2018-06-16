@@ -1,6 +1,7 @@
 *.bin
 *.png
 *.prof
+*.npy
 *DS_Store
 __pycache__
 ._*
