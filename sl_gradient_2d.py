@@ -38,4 +38,16 @@ inside = np.empty(tuple(out_shape), dtype=np.int32)
 _gradient_2d(moving, moving_world2grid, moving_spacing, 
              static_grid2world, out, inside)
 
-np.save('gradient_2d.npy', out)
+np.save('sl_gradient_2d.npy', out)
+
+out = 255 * (out - out.min()) / (out.max() - out.min())
+
+import matplotlib.pyplot as plt
+from xvfbwrapper import Xvfb
+with Xvfb() as xvfb:
+	fig, ax = plt.subplots(1, 2)
+	ax[0] = imshow(out[:, :, 0])
+	ax[0] = set_title('grad_x')
+	ax[1] = imshow(out[:, :, 1])
+	ax[1] = set_title('grad_y')
+	fig.savefig('sl_gradient_2d.png')
