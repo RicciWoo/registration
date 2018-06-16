@@ -13,8 +13,6 @@ from dipy.align.transforms import (TranslationTransform2D,
                                    RigidTransform2D,
                                    AffineTransform2D)
 from xvfbwrapper import Xvfb
-vdisplay = Xvfb()
-vdisplay.start()
 
 # fetch static image from the Stanford HARDI dataset
 fetch_stanford_hardi()
@@ -104,5 +102,3 @@ transformed = affine.transform(moving)
 with Xvfb() as xvfb:
   regtools.overlay_images(static, transformed, "Static", 
                           "Overlay", "Moving", "transformed_affine.png")
-
-vdisplay.stop()
