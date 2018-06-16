@@ -46,8 +46,8 @@ import matplotlib.pyplot as plt
 from xvfbwrapper import Xvfb
 with Xvfb() as xvfb:
 	fig, ax = plt.subplots(1, 2)
-	ax[0] = imshow(out[:, :, 0])
-	ax[0] = set_title('grad_x')
-	ax[1] = imshow(out[:, :, 1])
-	ax[1] = set_title('grad_y')
+	ax[0].imshow(out[:, :, 0])
+	ax[0].set_title('grad_x')
+	ax[1].imshow(out[:, :, 1])
+	ax[1].set_title('grad_y')
 	fig.savefig('sl_gradient_2d.png')
