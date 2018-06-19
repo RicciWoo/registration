@@ -12,7 +12,7 @@ def comp_pdf(f_ori, f_par):
 		for j in range(nrow):
 			for k in range(ncol):
 				diff = abs(ori[i, j, k] - par[i, j, k])
-				if diff < 1.e-7:
+				if not diff < 1.e-7:
 					print(i, j, k, diff)
 	else:
 		print('all pixels are the same')
