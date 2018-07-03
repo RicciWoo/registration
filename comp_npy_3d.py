@@ -18,3 +18,7 @@ def comp_grad(f_ori, f_par):
 						print(k, i, j, l)
 	else:
 		print('all pixels are the same')
+
+# A = np.ones((20, 20, 10))
+# B = 2 * np.ones((20, 20, 10))
+# s = np.sum(np.abs(A - B))
