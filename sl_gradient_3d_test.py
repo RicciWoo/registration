@@ -29,7 +29,7 @@ ftype = moving.dtype.type
 out = np.empty(tuple(out_shape)+(dim,), dtype=ftype)
 inside = np.empty(tuple(out_shape), dtype=np.int32)
 _gradient_3d(moving, moving_world2grid, moving_spacing, 
-             static_grid2world, out, inside, 30)
+             static_grid2world, out, inside, 31)
 
 # np.save('sl_gradient_3d.npy', out)
 
