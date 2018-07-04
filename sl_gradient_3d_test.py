@@ -1,16 +1,16 @@
 import numpy as np
-from dipy.data import fetch_stanford_hardi, read_stanford_hardi
-from dipy.data.fetcher import fetch_syn_data, read_syn_data
+from dipy.data import read_stanford_hardi
+from dipy.data.fetcher import read_syn_data
 import numpy.linalg as npl
 from dipy.align.imwarp import get_direction_and_spacings
 from dipy.align.vector_fields import _gradient_3d
 
-fetch_stanford_hardi()
+# fetch_stanford_hardi()
 nib_stanford, _ = read_stanford_hardi()
 static = np.squeeze(nib_stanford.get_data())[..., 0]
 static_grid2world = nib_stanford.affine
 
-fetch_syn_data()
+# fetch_syn_data()
 _, nib_syn_b0 = read_syn_data()
 moving = np.array(nib_syn_b0.get_data())
 moving_grid2world = nib_syn_b0.affine
