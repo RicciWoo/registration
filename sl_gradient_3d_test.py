@@ -5,7 +5,7 @@ import numpy.linalg as npl
 from dipy.align.imwarp import get_direction_and_spacings
 from dipy.align.vector_fields import _gradient_3d
 
-def grad(int num_threads):
+def grad(num_threads=0):
 	fetch_stanford_hardi()
 	nib_stanford, _ = read_stanford_hardi()
 	static = np.squeeze(nib_stanford.get_data())[..., 0]
