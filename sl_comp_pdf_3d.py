@@ -20,8 +20,23 @@ moving_world2grid = npl.inv(moving_grid2world)
 
 from dipy.align.imwarp import get_direction_and_spacings
 dim = len(static.shape)
+static_direction, static_spacing = \
+    get_direction_and_spacings(static_grid2world, self.dim)
 moving_direction, moving_spacing = \
     get_direction_and_spacings(moving_grid2world, dim)
+
+static = ((static.astype(np.float64) - static.min()) /
+          (static.max() - static.min()))
+moving = ((moving.astype(np.float64) - moving.min()) /
+          (moving.max() - moving.min()))
+
+from dipy.align.transforms import AffineTransform3D
+transform = AffineTransform3D()
+theta = transform.get_identity_parameters()
+current_affine = transform.param_to_matrix(theta)
+static2prealigned = static_grid2world
+
+
 
 from dipy.align.vector_fields import _gradient_3d
 out_shape = static.shape
@@ -31,7 +46,7 @@ inside = np.empty(tuple(out_shape), dtype=np.int32)
 _gradient_3d(moving, moving_world2grid, moving_spacing, 
              static_grid2world, out, inside)
 
-np.save('sl_aff_par_grad.npy', out)
+np.save('sl_gradient_3d.npy', out)
 
 out = np.asarray(out, dtype=np.float64)
 out = 255 * (out - out.min()) / (out.max() - out.min())
@@ -63,4 +78,4 @@ with Xvfb() as xvfb:
 	ax[2, 1].set_title('sagittal_y')
 	ax[2, 2].imshow(sagittal[:, :, 2], cmap='gray')
 	ax[2, 2].set_title('sagittal_z')
-	fig.savefig('sl_aff_par_grad.png')
+	fig.savefig('sl_gradient_3d.png')

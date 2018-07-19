@@ -31,6 +31,14 @@ inside = np.empty(tuple(out_shape), dtype=np.int32)
 _gradient_3d(moving, moving_world2grid, moving_spacing, 
              static_grid2world, mgrad, inside)
 
+
+
+from dipy.align.transforms import (AffineTransform3D, AffineRegistration)
+transform = AffineTransform3D()
+theta = transform.get_identity_parameters()
+
+affreg = AffineRegistration()
+
 n = theta.shape[0]
 joint_grad = np.zeros((nbins, nbins, n))
 
