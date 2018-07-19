@@ -11,7 +11,8 @@ def comp_grad(f_ori, f_par):
 
 	diff = np.sum(np.abs(ori - par) < 1.e+7)
 	if diff > 0:
-		print('there are ' + diff + 'different voxels!')
+		print(diff)
+		print('different voxels')
 	else:
 		print('all voxels are the same!')
 
