@@ -9,11 +9,12 @@ def comp_grad(f_ori, f_par):
 	ncol = ori.shape[2]
 	ndir = ori.shape[3]
 
-	diff = np.sum(np.abs(ori - par) < 1.e+7)
+	diff = np.sum(np.abs(ori - par) > 1.e+7)
 	if diff > 0:
 		print(diff)
 		print('different voxels')
 	else:
+		print(diff)
 		print('all voxels are the same!')
 
 
