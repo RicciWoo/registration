@@ -20,10 +20,18 @@ moving = ((moving.astype(np.float64) - moving.min()) /
 static = np.array(static).astype(np.float64)
 moving = np.array(moving).astype(np.float64)
 
+from dipy.align.imaffine import AffineMap
+starting_affine = np.eye(dim + 1)
+affine_map = AffineMap(starting_affine, static.shape, static_grid2world,
+                       moving.shape, moving_grid2world)
+
+static_values = static
+moving_values = affine_map.transform(moving)
+
 from dipy.align.parzenhist import ParzenJointHistogram
 nbins = 32
 histogram = ParzenJointHistogram(nbins)
-histogram.update_pdfs_dense(static, moving)
+histogram.update_pdfs_dense(static_values, moving_values)
 
 np.save('sl_aff_par_cpdf_joint', histogram.joint)
 np.save('sl_aff_par_cpdf_smarg', histogram.smarginal)
