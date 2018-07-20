@@ -21,6 +21,7 @@ static = np.array(static).astype(np.float64)
 moving = np.array(moving).astype(np.float64)
 
 from dipy.align.imaffine import AffineMap
+dim = len(static.shape)
 starting_affine = np.eye(dim + 1)
 affine_map = AffineMap(starting_affine, static.shape, static_grid2world,
                        moving.shape, moving_grid2world)
