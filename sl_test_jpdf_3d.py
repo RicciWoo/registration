@@ -43,8 +43,13 @@ static_values = static
 moving_values = affine_map.transform(moving)
 
 from dipy.align.transforms import AffineTransform3D
-params = None
 transform = AffineTransform3D()
+
+from dipy.align.parzenhist import ParzenJointHistogram
+nbins = 32
+histogram = ParzenJointHistogram(nbins)
+
+params = None
 static2prealigned = static_grid2world
 histogram.update_gradient_dense(params, transform, static_values,
 	                moving_values, static2prealigned, mgrad)
