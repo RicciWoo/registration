@@ -3,10 +3,6 @@ import numpy as np
 def comp_grad(f_ori, f_par):
 	ori = np.load(f_ori)
 	par = np.load(f_par)
-	ori = ((ori.astype(np.float64) - ori.min()) /
-          (ori.max() - ori.min()))
-	par = ((par.astype(np.float64) - par.min()) /
-          (par.max() - par.min()))
 
 	n_ori = np.sum(np.abs(ori) > 0)
 	if n_ori > 0:
