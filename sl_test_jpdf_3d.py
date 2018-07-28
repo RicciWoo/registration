@@ -12,6 +12,11 @@ _, nib_syn_b0 = read_syn_data()
 moving = np.array(nib_syn_b0.get_data())
 moving_grid2world = nib_syn_b0.affine
 
+static = ((static.astype(np.float64) - static.min()) /
+          (static.max() - static.min()))
+moving = ((moving.astype(np.float64) - moving.min()) /
+          (moving.max() - moving.min()))
+
 static = np.array(static).astype(np.float64)
 moving = np.array(moving).astype(np.float64)
 
