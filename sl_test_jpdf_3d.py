@@ -54,4 +54,4 @@ static2prealigned = static_grid2world
 histogram.update_gradient_dense(params, transform, static_values,
 	                moving_values, static2prealigned, mgrad)
 
-np.save('sl_aff_par_jpdf_joint_grad.npy', histogram.joint_grad)
+np.save('sl_aff_par_jpdf_jgrad.npy', histogram.joint_grad)
