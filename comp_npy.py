@@ -18,7 +18,7 @@ def comp_grad(f_ori, f_par):
 	else:
 		print('all values in compare are zero')
 
-	diff = np.sum(np.abs(ori - par) > 1.e-5)
+	diff = np.sum(np.abs(ori - par) > 1.e-7)
 	if diff > 0:
 		print(diff)
 		print('different voxels')
