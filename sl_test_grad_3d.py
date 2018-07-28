@@ -33,34 +33,34 @@ _gradient_3d(moving, moving_world2grid, moving_spacing,
 
 np.save('sl_aff_par_grad.npy', out)
 
-out = np.asarray(out, dtype=np.float64)
-out = 255 * (out - out.min()) / (out.max() - out.min())
+# out = np.asarray(out, dtype=np.float64)
+# out = 255 * (out - out.min()) / (out.max() - out.min())
 
-slice_indices = np.array(out.shape) // 2
-axial = np.asarray(out[:, :, slice_indices[2]]).astype(np.uint8)
-coronal = np.asarray(out[:, slice_indices[1], :]).astype(np.uint8)
-sagittal = np.asarray(out[slice_indices[0], :, :]).astype(np.uint8)
+# slice_indices = np.array(out.shape) // 2
+# axial = np.asarray(out[:, :, slice_indices[2]]).astype(np.uint8)
+# coronal = np.asarray(out[:, slice_indices[1], :]).astype(np.uint8)
+# sagittal = np.asarray(out[slice_indices[0], :, :]).astype(np.uint8)
 
-import matplotlib.pyplot as plt
-from xvfbwrapper import Xvfb
-with Xvfb() as xvfb:
-	fig, ax = plt.subplots(3, 3)
-	ax[0, 0].imshow(axial[:, :, 0], cmap='gray')
-	ax[0, 0].set_title('axial_x')
-	ax[0, 1].imshow(axial[:, :, 1], cmap='gray')
-	ax[0, 1].set_title('axial_y')
-	ax[0, 2].imshow(axial[:, :, 2], cmap='gray')
-	ax[0, 2].set_title('axial_z')
-	ax[1, 0].imshow(coronal[:, :, 0], cmap='gray')
-	ax[1, 0].set_title('coronal_x')
-	ax[1, 1].imshow(coronal[:, :, 1], cmap='gray')
-	ax[1, 1].set_title('coronal_y')
-	ax[1, 2].imshow(coronal[:, :, 2], cmap='gray')
-	ax[1, 2].set_title('coronal_z')
-	ax[2, 0].imshow(sagittal[:, :, 0], cmap='gray')
-	ax[2, 0].set_title('sagittal_x')
-	ax[2, 1].imshow(sagittal[:, :, 1], cmap='gray')
-	ax[2, 1].set_title('sagittal_y')
-	ax[2, 2].imshow(sagittal[:, :, 2], cmap='gray')
-	ax[2, 2].set_title('sagittal_z')
-	fig.savefig('sl_aff_par_grad.png')
+# import matplotlib.pyplot as plt
+# from xvfbwrapper import Xvfb
+# with Xvfb() as xvfb:
+# 	fig, ax = plt.subplots(3, 3)
+# 	ax[0, 0].imshow(axial[:, :, 0], cmap='gray')
+# 	ax[0, 0].set_title('axial_x')
+# 	ax[0, 1].imshow(axial[:, :, 1], cmap='gray')
+# 	ax[0, 1].set_title('axial_y')
+# 	ax[0, 2].imshow(axial[:, :, 2], cmap='gray')
+# 	ax[0, 2].set_title('axial_z')
+# 	ax[1, 0].imshow(coronal[:, :, 0], cmap='gray')
+# 	ax[1, 0].set_title('coronal_x')
+# 	ax[1, 1].imshow(coronal[:, :, 1], cmap='gray')
+# 	ax[1, 1].set_title('coronal_y')
+# 	ax[1, 2].imshow(coronal[:, :, 2], cmap='gray')
+# 	ax[1, 2].set_title('coronal_z')
+# 	ax[2, 0].imshow(sagittal[:, :, 0], cmap='gray')
+# 	ax[2, 0].set_title('sagittal_x')
+# 	ax[2, 1].imshow(sagittal[:, :, 1], cmap='gray')
+# 	ax[2, 1].set_title('sagittal_y')
+# 	ax[2, 2].imshow(sagittal[:, :, 2], cmap='gray')
+# 	ax[2, 2].set_title('sagittal_z')
+# 	fig.savefig('sl_aff_par_grad.png')
