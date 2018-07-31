@@ -1,0 +1,83 @@
+Wrote profile results to lc_aff_reg_3d.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 55.9866 s
+File: /Users/ricciwoo/Downloads/GSoC_Dipy/dipy/dipy/align/imaffine.py
+Function: _update_mutual_information at line 609
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   609                                               @profile
+   610                                               def _update_mutual_information(self, params, update_gradient=True):
+   611                                                   r""" Updates marginal and joint distributions and the joint gradient
+   612                                           
+   613                                                   The distributions are updated according to the static and transformed
+   614                                                   images. The transformed image is precisely the moving image after
+   615                                                   transforming it by the transform defined by the `params` parameters.
+   616                                           
+   617                                                   The gradient of the joint PDF is computed only if update_gradient
+   618                                                   is True.
+   619                                           
+   620                                                   Parameters
+   621                                                   ----------
+   622                                                   params : array, shape (n,)
+   623                                                       the parameter vector of the transform currently used by the metric
+   624                                                       (the transform name is provided when self.setup is called), n is
+   625                                                       the number of parameters of the transform
+   626                                                   update_gradient : Boolean, optional
+   627                                                       if True, the gradient of the joint PDF will also be computed,
+   628                                                       otherwise, only the marginal and joint PDFs will be computed.
+   629                                                       The default is True.
+   630                                                   """
+   631                                                   # Get the matrix associated with the `params` parameter vector
+   632       371      11816.0     31.8      0.0          current_affine = self.transform.param_to_matrix(params)
+   633                                                   # Get the static-to-prealigned matrix (only needed for the MI gradient)
+   634       371        456.0      1.2      0.0          static2prealigned = self.static_grid2world
+   635       371        405.0      1.1      0.0          if self.starting_affine is not None:
+   636       371       3218.0      8.7      0.0              current_affine = current_affine.dot(self.starting_affine)
+   637       371        922.0      2.5      0.0              static2prealigned = self.starting_affine.dot(static2prealigned)
+   638       371      43350.0    116.8      0.1          self.affine_map.set_affine(current_affine)
+   639                                           
+   640                                                   # Update the histogram with the current joint intensities
+   641       371    9960946.0  26848.9     17.8          static_values, moving_values = self._update_histogram()
+   642                                           
+   643       371        978.0      2.6      0.0          H = self.histogram  # Shortcut to `self.histogram`
+   644       371        290.0      0.8      0.0          grad = None  # Buffer to write the MI gradient into (if needed)
+   645       371        353.0      1.0      0.0          if update_gradient:
+   646       371        320.0      0.9      0.0              grad = self.metric_grad
+   647                                                       # Compute the gradient of the joint PDF w.r.t. parameters
+   648       371        356.0      1.0      0.0              if self.sampling_proportion is None:  # Dense case
+   649                                                           # Compute the gradient of moving img. at physical points
+   650                                                           # associated with the >>static image's grid<< cells
+   651                                                           # The image gradient must be eval. at current moved points
+   652       371       4175.0     11.3      0.0                  grid_to_world = current_affine.dot(self.static_grid2world)
+   653       371        722.0      1.9      0.0                  mgrad, inside = vf.gradient(self.moving,
+   654       371        335.0      0.9      0.0                                              self.moving_world2grid,
+   655       371        326.0      0.9      0.0                                              self.moving_spacing,
+   656       371        484.0      1.3      0.0                                              self.static.shape,
+   657       371   24378289.0  65709.7     43.5                                              grid_to_world)
+   658                                                           # The Jacobian must be evaluated at the pre-aligned points
+   659       371       1385.0      3.7      0.0                  H.update_gradient_dense(
+   660       371        294.0      0.8      0.0                      params,
+   661       371        559.0      1.5      0.0                      self.transform,
+   662       371        274.0      0.7      0.0                      static_values,
+   663       371        282.0      0.8      0.0                      moving_values,
+   664       371        293.0      0.8      0.0                      static2prealigned,
+   665       371   21562493.0  58119.9     38.5                      mgrad)
+   666                                                       else:  # Sparse case
+   667                                                           # Compute the gradient of moving at the sampling points
+   668                                                           # which are already given in physical space coordinates
+   669                                                           pts = current_affine.dot(self.samples.T).T  # Moved points
+   670                                                           mgrad, inside = vf.sparse_gradient(self.moving,
+   671                                                                                              self.moving_world2grid,
+   672                                                                                              self.moving_spacing,
+   673                                                                                              pts)
+   674                                                           # The Jacobian must be evaluated at the pre-aligned points
+   675                                                           pts = self.samples_prealigned[..., :self.dim]
+   676                                                           H.update_gradient_sparse(params, self.transform, static_values,
+   677                                                                                    moving_values, pts, mgrad)
+   678                                           
+   679                                                   # Call the cythonized MI computation with self.histogram fields
+   680       371       1321.0      3.6      0.0          self.metric_val = compute_parzen_mi(H.joint, H.joint_grad,
+   681       371        402.0      1.1      0.0                                              H.smarginal, H.mmarginal,
+   682       371      11580.0     31.2      0.0                                              grad)
