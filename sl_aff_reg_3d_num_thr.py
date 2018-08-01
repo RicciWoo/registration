@@ -55,7 +55,7 @@ with Xvfb() as xvfb:
 # create similarity metric (Mutual Information)
 nbins = 32           # number of bins to discretize joint & marginal PDF
 sampling_prop = None # percentage of voxels for computing PDFs, None: 100%
-metric = MutualInformationMetric(nbins, sampling_prop)
+metric = MutualInformationMetric(nbins, sampling_prop, num_threads=12)
 
 # multi-resolution strategy, building Guassian Pyramid
 level_iters = [10000, 1000, 100] # number of iterations
