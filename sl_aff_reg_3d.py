@@ -115,3 +115,6 @@ with Xvfb() as xvfb:
                           "Static", "Transformed", "transformed_affine_1.png")
   regtools.overlay_slices(static, transformed, None, 2,
                           "Static", "Transformed", "transformed_affine_2.png")
+
+num_calls = metric.histogram.num_calls
+print(num_calls)
