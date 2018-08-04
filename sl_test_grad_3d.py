@@ -20,18 +20,13 @@ moving_world2grid = npl.inv(moving_grid2world)
 
 from dipy.align.imwarp import get_direction_and_spacings
 dim = len(static.shape)
-moving_direction, moving_spacing = \
-    get_direction_and_spacings(moving_grid2world, dim)
+_, moving_spacing = get_direction_and_spacings(moving_grid2world, dim)
 
-from dipy.align.vector_fields import _gradient_3d
-out_shape = static.shape
-ftype = moving.dtype.type
-out = np.empty(tuple(out_shape)+(dim,), dtype=ftype)
-inside = np.empty(tuple(out_shape), dtype=np.int32)
-_gradient_3d(moving, moving_world2grid, moving_spacing, 
-             static_grid2world, out, inside)
+from dipy.align.vector_fields import gradient
+mgrad, _ = gradient(moving, moving_world2grid, moving_spacing, 
+                    static.shape, static_grid2world)
 
-np.save('sl_aff_par_grad.npy', out)
+np.save('sl_aff_par_grad.npy', mgrad)
 
 # out = np.asarray(out, dtype=np.float64)
 # out = 255 * (out - out.min()) / (out.max() - out.min())
