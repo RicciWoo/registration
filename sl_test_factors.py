@@ -9,6 +9,6 @@ a /= a.max()
 b /= b.max()
 radius = 6
 factors = np.asarray(cc.precompute_cc_factors_2d(a, b, radius))
-np.save('sl_syn_factors.npy')
+np.save('sl_syn_factors.npy', factors)
 # expected = np.asarray(cc.precompute_cc_factors_2d_test(a, b, radius))
 # assert_array_almost_equal(factors, expected)
