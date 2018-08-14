@@ -54,3 +54,4 @@ profile = lp.LineProfiler(vfu.compose_vector_fields_3d)
 profile.runcall(vfu.compose_vector_fields_3d, disp1,
                 disp2 / time_scaling, premult_index,
                 premult_disp, time_scaling, None)
+profile.print_stats()
